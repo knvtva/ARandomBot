@@ -35,12 +35,23 @@ async def on_ready():
     print("-----------------------------------------------")
 
     status_task.start()
+    await load_cogs()
 
 @tasks.loop(minutes=1.0)
 async def status_task():
     statues = ["ARandomBot is watching you.", "@knvtva", "woahoahwaohwoahdiscordbottt"]
 
     await bot.change_presence(activity=discord.activity.Game(random.choice(statues)))
+
+async def load_cogs():
+        for file in os.listdir(f"{os.path.realpath(os.path.dirname(__file__))}/Cogs"):
+            if file.endswith(".py"):
+                extension = file[:-3]
+                try:
+                    await bot.load_extension(f"Cogs.{extension}")
+                    logger.info(f"Loaded extension '{extension}'")
+                except Exception as e:
+                    logger.error(f"Failed to load extension {e}")
                               
                            
 bot.run(Config['token'])
